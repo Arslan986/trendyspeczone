@@ -9,7 +9,6 @@ function CategoryIndex() {
     // all usestates in here 
     const [data, setData] = useState(useLoaderData());
     const [action, setaction] = useState("");
-    const [selectedIds, setSelectedIds] = useState([]);
     const [dataDisplayLimit, setdataDisplayLimit] = useState(10);
     const [page, setPage] = useState(1);
     const [searchValue, setSearchValue] = useState("");
@@ -46,9 +45,9 @@ function CategoryIndex() {
                 allselectedIds.push(checkBoxes[i].value);
             }
         }
-        setSelectedIds(allselectedIds);
+
         const bulkParam = {
-            ids: selectedIds,
+            ids: allselectedIds,
             action: action
         }
         Swal.fire({

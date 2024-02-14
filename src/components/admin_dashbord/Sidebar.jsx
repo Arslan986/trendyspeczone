@@ -3,6 +3,7 @@ import React from 'react'
 import { NavLink } from 'react-router-dom'
 
 function Sidebar() {
+    
     return (
         <aside className="app-sidebar sticky" id="sidebar">
 
@@ -101,10 +102,10 @@ function Sidebar() {
                             </a>
                             <ul className="slide-menu child1">
                                 <li className="slide">
-                                    <a href="google-maps.html" className="side-menu__item">Manage Tags</a>
+                                    <NavLink to="/admin/tag" className="side-menu__item">Manage Tags</NavLink>
                                 </li>
                                 <li className="slide">
-                                    <a href="google-maps.html" className="side-menu__item">Add Tag</a>
+                                    <NavLink to="/admin/tag/create" className="side-menu__item">Add Tag</NavLink>
                                 </li>
                             </ul>
                         </li>

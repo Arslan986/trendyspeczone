@@ -4,7 +4,7 @@ import { useEffect, useState, } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 
-function PostIndex() {
+function TagIndex() {
 
     // all usestates in here 
     const [data, setData] = useState(useLoaderData());
@@ -45,7 +45,6 @@ function PostIndex() {
                 allselectedIds.push(checkBoxes[i].value);
             }
         }
-
         const bulkParam = {
             ids: allselectedIds,
             action: action
@@ -60,7 +59,7 @@ function PostIndex() {
             confirmButtonText: 'Yes, Update it!'
         }).then(async (result) => {
             if (result.isConfirmed) {
-                const res = await axios.post(`http://127.0.0.1:8000/api/v1/post-bulkaction`, bulkParam);
+                const res = await axios.post(`http://127.0.0.1:8000/api/v1/tag-bulkaction`, bulkParam);
                 fetchData();
 
                 // Use querySelectorAll for checkboxes
@@ -103,7 +102,7 @@ function PostIndex() {
     // fetch data is here 
     const fetchData = async () => {
         try {
-            const res = await axios.get(`http://127.0.0.1:8000/api/v1/post`);
+            const res = await axios.get(`http://127.0.0.1:8000/api/v1/tag`);
             // Update data in state
             setData(res.data.data);
             setAllData(res.data.data)
@@ -125,7 +124,7 @@ function PostIndex() {
             confirmButtonText: 'Yes, delete it!'
         }).then(async (result) => {
             if (result.isConfirmed) {
-                const response = await axios.delete(`http://127.0.0.1:8000/api/v1/post/${id}`);
+                const response = await axios.delete(`http://127.0.0.1:8000/api/v1/tag/${id}`);
                 fetchData();
                 Swal.fire(
                     'Deleted!',
@@ -193,12 +192,12 @@ function PostIndex() {
         <div className="main-content app-content">
             <div className="container-fluid">
                 <div className="d-md-flex d-block align-items-center justify-content-between my-4 page-header-breadcrumb">
-                    <h1 className="page-title fw-semibold fs-18 mb-0">All Post</h1>
+                    <h1 className="page-title fw-semibold fs-18 mb-0">All Tags</h1>
                     <div className="ms-md-1 ms-0">
                         <nav>
                             <ol className="breadcrumb mb-0">
                                 <li className="breadcrumb-item"><NavLink to="/admin/dashboard">Dashboard</NavLink></li>
-                                <li className="breadcrumb-item active" aria-current="page">All Post</li>
+                                <li className="breadcrumb-item active" aria-current="page">All Tags</li>
                             </ol>
                         </nav>
                     </div>
@@ -210,7 +209,7 @@ function PostIndex() {
                                 <div className="row">
                                     <div className="col-lg-6 d-flex align-items-center">
                                         <div className="card-title">
-                                            All Post
+                                            All Tags
                                         </div>
                                     </div>
                                     <div className="col-lg-6 d-flex justify-content-end">
@@ -226,8 +225,8 @@ function PostIndex() {
                                             <button type='button' id="apply_btn" className="btn btn-primary btn-sm apply_btn" onClick={() => (bulkAction())}>Apply</button>
                                         </div>
                                         <div>
-                                            <NavLink to="/admin/post/create">
-                                                <button id="button" className="btn btn-dark btn-sm"><i className="bi bi-plus"></i> Add Post</button>
+                                            <NavLink to="/admin/tag/create">
+                                                <button id="button" className="btn btn-dark btn-sm"><i className="bi bi-plus"></i> Add Tag</button>
                                             </NavLink>
                                         </div>
                                     </div>
@@ -279,9 +278,8 @@ function PostIndex() {
                                                                     id='allCheckbox' />
                                                             </th>
                                                             <th>#</th>
-                                                            <th>Title</th>
+                                                            <th>Name</th>
                                                             <th>Slug</th>
-                                                            <th>Image</th>
                                                             <th>Status</th>
                                                             <th>Action</th>
                                                         </tr>
@@ -295,7 +293,7 @@ function PostIndex() {
 
                                                                         <input
                                                                             className="form-check-input form-checked-dark single-checkbox"
-                                                                            name='post_id'
+                                                                            name='tag_id'
                                                                             onClick={singleCheck}
                                                                             type="checkbox"
                                                                             value={item.id}
@@ -305,21 +303,16 @@ function PostIndex() {
 
                                                                     </td>
                                                                     <td>{++index}</td>
-                                                                    <td>{item.title}</td>
+                                                                    <td>{item.name}</td>
                                                                     <td>{item.slug}</td>
-                                                                    <td>
-                                                                        {item.image == null ? null :
-                                                                            <img src={`http://localhost:8000/images/posts/${item.image}`} alt="" style={{ height: "50px", width: "50px" }} />
-                                                                        }
-                                                                    </td>
                                                                     <td>{item.status == 1 ? <span className="badge rounded-pill bg-success">Publish</span> : <span className="badge rounded-pill bg-warning">Draft</span>}</td>
                                                                     <td>
                                                                         <div className="btn-list">
-                                                                            <NavLink to={`/admin/post/edit/${item.id}`}>
+                                                                            <NavLink to={`/admin/tag/edit/${item.id}`}>
                                                                                 <button className="btn btn-sm btn-icon btn-wave btn-primary-light waves-effect waves-light"><i className="ri-edit-line"></i></button>
                                                                             </NavLink>
                                                                             <button className="btn btn-sm btn-icon btn-wave btn-danger-light waves-effect waves-light" onClick={() => (handleDelete(item.id))}><i className="ri-delete-bin-line"></i></button>
-                                                                            <NavLink to={`/admin/post/edit/${item.id}`} style={{ margin: "0 0.375rem 0.375rem 0.375rem" }}>
+                                                                            <NavLink to={`/admin/tag/edit/${item.id}`} style={{ margin: "0 0.375rem 0.375rem 0.375rem" }}>
                                                                                 <button className="btn btn-sm btn-icon btn-wave btn-success-light waves-effect waves-light"><i className="bi bi-eye"></i></button>
                                                                             </NavLink>
                                                                         </div>
@@ -386,9 +379,9 @@ function PostIndex() {
     )
 }
 
-export default PostIndex
+export default TagIndex
 
-export const postData = async () => {
-    const res = await axios.get(`http://127.0.0.1:8000/api/v1/post`);
+export const tagData = async () => {
+    const res = await axios.get(`http://127.0.0.1:8000/api/v1/tag`);
     return res.data.data;
 }
