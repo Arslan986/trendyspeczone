@@ -10,15 +10,19 @@ function CategoryCreate() {
     useEffect(() => {
         $('.dropify').dropify();
     }, []);
+
+    // form data object init here 
     const [formData, setFormData] = useState({
         name: '',
         status: '',
         slug: '',
         // ... aur baki ke form fields
     });
+    // image state here 
     const [image, setImage] = useState(null); // State variable for image
 
 
+    // function for handle change in form fields
     const handleChange = (e) => {
         if (e.target.name === 'image') {
             // If the field is an image, update the image state
@@ -28,9 +32,9 @@ function CategoryCreate() {
             setFormData({ ...formData, [e.target.name]: e.target.value });
         }
         setFormData({ ...formData, [e.target.name]: e.target.value });
-        console.log(formData);
     };
 
+    // form submit function here 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -47,7 +51,6 @@ function CategoryCreate() {
                 },
             });
             navigate('/admin/category')
-            console.log('Server Response:', response.data);
         } catch (error) {
             console.error('Error posting form data:', error);
         }

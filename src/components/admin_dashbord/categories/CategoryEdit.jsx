@@ -6,12 +6,15 @@ import 'dropify';
 import { useParams, useNavigate, useLoaderData } from "react-router-dom";
 function CategoryEdit() {
     const navigate = useNavigate();
-    const { category_id } = useParams(); // Extract category_id from useParams
 
+    // Extract category_id from useParams
+    const { category_id } = useParams();
 
-    const [image, setImage] = useState(null); // State variable for image
+    // State variable for image
+    const [image, setImage] = useState(null);
     const loaderData = useLoaderData();
 
+    // form data object are here 
     const [formData, setFormData] = useState({
         name: '',
         status: '',
@@ -19,12 +22,14 @@ function CategoryEdit() {
         // ... and other form fields
     });
 
+    // use effect is here for data loding in form fields 
+
     useEffect(() => {
         handleFormData(loaderData);
-      
         console.log(loaderData)
     }, []);
 
+    // handle form data function is here 
     const handleFormData = (res) => {
         setFormData({
             ...formData,
@@ -44,6 +49,7 @@ function CategoryEdit() {
         $('.dropify').dropify();
     };
 
+    // from fied input change here 
     const handleChange = (e) => {
         if (e.target.name === 'image') {
             // If the field is an image, update the image state
@@ -54,6 +60,7 @@ function CategoryEdit() {
         }
     };
 
+    // form field handle submit here 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -150,7 +157,7 @@ function CategoryEdit() {
 
 export default CategoryEdit
 
-export const editCategoryData = async ({params}) => {
+export const editCategoryData = async ({ params }) => {
     const res = await axios.get(`http://127.0.0.1:8000/api/v1/category/${params.category_id}/edit`);
     return res;
 } 

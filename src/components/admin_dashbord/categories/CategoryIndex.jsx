@@ -6,32 +6,47 @@ import Swal from 'sweetalert2';
 
 function CategoryIndex() {
 
+    // all usestates in here 
     const [data, setData] = useState(useLoaderData());
     const [action, setaction] = useState("");
     const [selectedIds, setSelectedIds] = useState([]);
     const [dataDisplayLimit, setdataDisplayLimit] = useState(10);
     const [page, setPage] = useState(1);
+    const [searchValue, setSearchValue] = useState("");
+    const [allData, setAllData] = useState(useLoaderData());
 
 
-    const handleCheckboxChange = (id) => {
-        // Toggle the selected state of the checkbox
-        setSelectedIds((prevSelectedIds) => {
-            if (prevSelectedIds.includes(id)) {
-                return prevSelectedIds.filter((selectedId) => selectedId !== id);
-            } else {
-                return [...prevSelectedIds, id];
-            }
-        });
-    };
-    const handleAllCheckboxChange = () => {
-        // Toggle the selected state of all checkboxes
-        setSelectedIds((prevSelectedIds) =>
-            prevSelectedIds.length === data.length ? [] : data.map((item) => item.id)
-        );
-    };
+    // table data search in here
+    const searchFilter = () => {
+        if (document.getElementById("searchdata").value == "") {
+            console.log(allData);
+            setData(allData);
+        } else {
+            const searchData = allData.filter((post) => new RegExp(searchValue, 'i').test(post.name));
+            setData(searchData);
+        }
+    }
+
+    // search input handle here 
+
+    const handleInputChange = (keyword) => {
+        setSearchValue(keyword);
+        searchFilter();
+    }
 
 
+
+    // bulkaction here 
     const bulkAction = () => {
+        const checkBoxes = document.getElementsByClassName("single-checkbox");
+        const allselectedIds = [];
+        for (let i = 0; i < checkBoxes.length; i++) {
+            if (checkBoxes[i].checked) {
+                console.log(checkBoxes[i].value);
+                allselectedIds.push(checkBoxes[i].value);
+            }
+        }
+        setSelectedIds(allselectedIds);
         const bulkParam = {
             ids: selectedIds,
             action: action
@@ -79,23 +94,26 @@ function CategoryIndex() {
 
     }
 
+    // useEffect are here only disable bulkaction dropdown
     useEffect(() => {
         document.querySelector(".apply_btn").disabled = true;
-
     }, [])
 
 
+
+    // fetch data is here 
     const fetchData = async () => {
         try {
             const res = await axios.get(`http://127.0.0.1:8000/api/v1/category`);
             // Update data in state
             setData(res.data.data);
-            console.log(res.data.data);
+            setAllData(res.data.data)
         } catch (error) {
             console.error('Error fetching data:', error);
         }
     };
 
+    // delete function are here 
     const handleDelete = function (id) {
 
         Swal.fire({
@@ -109,12 +127,7 @@ function CategoryIndex() {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 const response = await axios.delete(`http://127.0.0.1:8000/api/v1/category/${id}`);
-                console.log(response);
                 fetchData();
-
-                // Here you would perform your delete action
-                // For example, call a delete API or perform the delete operation
-                // After the delete action is completed, you can show another alert
                 Swal.fire(
                     'Deleted!',
                     'Your data has been deleted.',
@@ -124,23 +137,20 @@ function CategoryIndex() {
         });
     }
 
+
+    // pagination function are here
     const selectPageHandler = (selectPage) => {
         if (selectPage >= 1 && selectPage <= Math.ceil(data.length / dataDisplayLimit) && selectPage !== page)
             setPage(selectPage)
     }
 
+    // show no of data in the data 
     const showNoOfDataInOnePage = (e) => {
         setdataDisplayLimit(e.target.value)
-        unChecked();
     }
-    function unChecked() {
-        let element = document.querySelector('.all-checkbox');
-        let allChecked = document.querySelectorAll(".single-checkbox");
-        for (let i = 0; i < allChecked.length; i++) {
-            allChecked[i].checked = false;
-            element.checked = false;
-        }
-    }
+
+
+    // allcheck box check function here 
     function allChecked() {
         let element = document.querySelector('.all-checkbox');
         let allChecked = document.querySelectorAll(".single-checkbox");
@@ -157,6 +167,9 @@ function CategoryIndex() {
             }
         }
     }
+
+    // single check box check function here 
+
     function singleCheck() {
         let allChecked = document.querySelectorAll(".single-checkbox");
         let atLeastOneChecked = false;
@@ -243,7 +256,13 @@ function CategoryIndex() {
                                             <div className="col-sm-12 col-md-6">
                                                 <div id="delete-datatable_filter" className="dataTables_filter">
                                                     <label>
-                                                        <input type="search" className="form-control form-control-sm" placeholder="Search..." aria-controls="delete-datatable" />
+                                                        <input type="search" className="form-control form-control-sm" placeholder="Search..."
+                                                            aria-controls="delete-datatable"
+                                                            value={searchValue}
+                                                            onChange={(e) => (handleInputChange(e.target.value))}
+                                                            id='searchdata'
+
+                                                        />
                                                     </label>
                                                 </div>
                                             </div>
@@ -258,9 +277,7 @@ function CategoryIndex() {
                                                                     onClick={allChecked}
                                                                     type="checkbox"
                                                                     value=""
-                                                                    id='allCheckbox'
-                                                                    checked={selectedIds.length === data.length}
-                                                                    onChange={handleAllCheckboxChange} />
+                                                                    id='allCheckbox' />
                                                             </th>
                                                             <th>#</th>
                                                             <th>Name</th>
@@ -282,9 +299,8 @@ function CategoryIndex() {
                                                                             name='category_id'
                                                                             onClick={singleCheck}
                                                                             type="checkbox"
-                                                                            value=""
+                                                                            value={item.id}
                                                                             id={`checkbox_${item.id}`}
-                                                                            checked={selectedIds.includes(item.id)}
                                                                             onChange={() => handleCheckboxChange(item.id)}
                                                                         />
 
